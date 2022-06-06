@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import root.entites.Utilisateur;
 import root.http.LoginReponse;
-import root.http.UserUpdate;
+import root.http.UserInput;
 
 public interface UtilisateurService {
 	
@@ -26,6 +26,6 @@ public interface UtilisateurService {
 
 	public void deleteUser(int id) throws Exception;
 	
-	public Utilisateur updateUser(Integer id, UserUpdate usr) throws Exception;
+	public Utilisateur updateUser(Integer id, UserInput usr) throws Exception;
 	
 }

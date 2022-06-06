@@ -34,6 +34,19 @@ public class DiscordServiceImpl implements DiscordService {
 
 	public Discord createDiscord(String name, String link, String channel) throws Exception {
 		
+		
+		if (name == null || name.trim().isEmpty()) {
+			throw new Exception("Erreur, Nom du Discord obligatoire");
+		}
+		
+		if (link == null || link.trim().isEmpty()) {
+			throw new Exception("Erreur, Lien du Discord obligatoire");
+		}
+		
+		if (channel == null || channel.trim().isEmpty()) {
+			throw new Exception("Erreur, Id du Channel obligatoire");
+		}
+		
 		List<Discord> liste = discordRepository.findDiscord(name, link, channel);
 		if (liste.size() > 0) {
 

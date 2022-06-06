@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import root.entites.Token;
 import root.entites.Utilisateur;
 import root.http.UserInput;
-import root.http.UserUpdate;
 import root.service.AccessSecurityService;
 import root.service.UtilisateurService;
 
@@ -90,8 +89,8 @@ public class UtilisateurCTRL {
 	}
 	
 	
-	@PutMapping("/api/user/{id}")
-	public ResponseEntity<Utilisateur> updateUser ( HttpServletRequest request, @PathVariable Integer id, @RequestBody UserUpdate user) throws Exception
+	@PutMapping("/api/user/update/{id}")
+	public ResponseEntity<Utilisateur> updateUser ( HttpServletRequest request, @PathVariable Integer id, @RequestBody UserInput user) throws Exception
 	{
 		
 		boolean okAdmin = access.verifierRole(request, "admin");

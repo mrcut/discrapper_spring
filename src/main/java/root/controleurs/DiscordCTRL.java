@@ -82,14 +82,14 @@ public class DiscordCTRL {
 	}
 
 	
-	@PutMapping("/api/discord/{id}")
+	@PutMapping("/api/discord/update/{id}")
 	public ResponseEntity<Discord> updateDiscord(@PathVariable Integer id , @RequestBody Discord discord) throws Exception{
 		Discord dis = disService.updateDiscord(id, discord);
 		return ResponseEntity.ok(dis);
 	}
 	
 
-	@DeleteMapping("/api/discord/{id}")
+	@DeleteMapping("/api/discord/delete/{id}")
 	public void deleteDiscord(@PathVariable Integer id) throws Exception{
 		disService.deleteDiscord(id);
 		

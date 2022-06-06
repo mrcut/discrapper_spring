@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import root.entites.Token;
 import root.entites.Utilisateur;
 import root.http.LoginReponse;
-import root.http.UserUpdate;
+import root.http.UserInput;
 import root.repository.MessageRepository;
 import root.repository.TokenRepository;
 import root.repository.UtilisateurRepository;
@@ -114,7 +114,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 	
 	
-	public Utilisateur updateUser(Integer id, UserUpdate usr) throws Exception{
+	public Utilisateur updateUser(Integer id, UserInput usr) throws Exception{
 		System.out.println(id);
 		Optional<Utilisateur> option = usrRepository.findById(id);
 		System.out.println(option);
@@ -122,10 +122,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			System.out.println("User is present");
 			Utilisateur u = option.get();
 
+			String encodedMdp = encodeur.hasher(usr.getMdp());
 			u.setUtilisateurEmail(usr.getEmail());
 			u.setUtilisateurNom(usr.getNom());
 			u.setUtilisateurPrenom(usr.getPrenom());
 			u.setUtilisateurTel(usr.getTel());
+			u.setUtilisateurMdp(encodedMdp);
 			u.setUtilisateurDiscord(usr.getDiscord());
 			u.setUtilisateurRole(usr.getRole());
 			usrRepository.save(u);
@@ -156,26 +158,50 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	public Utilisateur createUser(String email, String mdp, String nom, String prenom,
 			String tel, String discord, String role) throws Exception {
 
+		
+		if (email == null || email.trim().isEmpty()) {
+			throw new Exception("Erreur, Email obligatoire");
+		}
+		
+		if (mdp == null || mdp.isEmpty()) {
+			throw new Exception("Erreur, Mdp obligatoire");
+		}
+		
+		if (nom == null || nom.trim().isEmpty()) {
+			throw new Exception("Erreur, Nom obligatoire");
+		}
+		
+		if (prenom == null || prenom.trim().isEmpty()) {
+			throw new Exception("Erreur, Prenom obligatoire");
+		}
+		
+		if (role == null || role.isEmpty()) {
+			throw new Exception("Erreur, Role obligatoire");
+		}
+		
 		List<Utilisateur> liste = usrRepository.findUser(email, discord);
 		
 		if (liste.size() > 0) {
 
 			for (Utilisateur u : liste) {
+				
 
+				
 				if (u.getUtilisateurEmail().equals(email)) {
 					throw new Exception("Erreur, cet Email est déjà pris");
 				}
-
+						
 
 				if (u.getUtilisateurDiscord().equals(discord)) {
 
 					throw new Exception("Erreur, cet identifiant Discord est déjà pris");
 				}
+				
+						
 			}
 		}
 		
 	
-
 		Utilisateur usr = new Utilisateur();
 		String encodedMdp = encodeur.hasher(mdp);
 		Date date = new Date();
