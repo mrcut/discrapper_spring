@@ -102,7 +102,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	
 	public List<Utilisateur> getAllUsers(){
 		
-		// regex et controles
 		
 		List<Utilisateur> usrs = usrRepository.findAll();
 		return usrs;

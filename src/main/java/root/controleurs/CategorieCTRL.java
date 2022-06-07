@@ -36,7 +36,6 @@ public class CategorieCTRL {
 	public ResponseEntity<List<Categorie>> getAllCategories(HttpServletRequest request){
 		boolean okAdmin = access.verifierRole(request, "admin");
 		boolean okEmploye = access.verifierRole(request, "employe");
-		
 		if (okAdmin || okEmploye) {
 			List<Categorie> categories = catService.getAllCategories();
 			return ResponseEntity.ok(categories);

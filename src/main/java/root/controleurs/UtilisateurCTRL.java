@@ -82,7 +82,7 @@ public class UtilisateurCTRL {
 	}
 
 	
-	@DeleteMapping("/api/user/{id}")
+	@DeleteMapping("/api/user/delete/{id}")
 	public void deleteUser(@PathVariable Integer id) throws Exception{
 		usrService.deleteUser(id);
 		

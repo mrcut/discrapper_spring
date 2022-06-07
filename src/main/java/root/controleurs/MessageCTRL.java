@@ -40,11 +40,11 @@ public class MessageCTRL {
 	public ResponseEntity<List<Message>> getAllMessages(HttpServletRequest request) {
 		boolean okAdmin = access.verifierRole(request, "admin");
 		boolean okEmploye = access.verifierRole(request, "employe");
-
 		if (okAdmin || okEmploye) {
 			List<Message> messages = msgService.getAllMessages();
 			return ResponseEntity.ok(messages);
 		} else {
+			
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
 		}
 	}
@@ -82,7 +82,6 @@ public class MessageCTRL {
 	public ResponseEntity<List<Message>> getAllMessagesByCategorie(HttpServletRequest request, @PathVariable("id") int id){
 		boolean okAdmin = access.verifierRole(request, "admin");
 		boolean okEmploye = access.verifierRole(request, "employe");
-
 		if (okAdmin || okEmploye) {
 			List<Message> messages = msgService.getAllMessagesByCategorie(id);
 			return ResponseEntity.ok(messages);
