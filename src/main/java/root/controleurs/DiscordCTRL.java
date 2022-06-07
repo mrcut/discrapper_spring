@@ -89,7 +89,7 @@ public class DiscordCTRL {
 	}
 	
 
-	@DeleteMapping("/api/discord/{id}")
+	@DeleteMapping("/api/discord/delete/{id}")
 	public void deleteDiscord(@PathVariable Integer id) throws Exception{
 		disService.deleteDiscord(id);
 		
