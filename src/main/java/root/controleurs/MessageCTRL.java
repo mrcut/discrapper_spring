@@ -59,6 +59,7 @@ public class MessageCTRL {
 		Optional<Message> option = msgService.getMessageById(id);
 		if(option.isPresent()) {
 			Message msg = option.get();
+			System.out.println(msg);
 			return ResponseEntity.ok(msg);
 
 		}
