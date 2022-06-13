@@ -85,24 +85,8 @@ public class DiscordServiceImpl implements DiscordService {
 		
 		
 		if(option.isPresent()) {
-			/*List<Discord> liste = discordRepository.findDiscord(dis.getName(), dis.getLink(), dis.getChannel());
-			
-			for(Discord d : liste) {
-				if(d.getDiscordNom().equals(dis.getDiscordNom()))
-				{	
-					throw new Exception("Erreur, ce Discord existe déjà");
-				}
-				if(d.getDiscordLien().equals(dis.getDiscordLien()))
-				{
-					throw new Exception("Erreur, ce Lien Discord existe déjà");
-				}
-				if(d.getDiscordChannel().equals(dis.getDiscordChannel()))
-				{
-					throw new Exception("Erreur, ce Channel existe déjà");
-				}
-			
-		} */
-			
+			List<Discord> liste = discordRepository.findDiscord(dis.getDiscordNom(), dis.getDiscordLien(), dis.getDiscordChannel());
+		
 			
 			Discord d = option.get();
 			d.setDiscordNom(dis.getDiscordNom());
