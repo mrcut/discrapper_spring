@@ -41,8 +41,9 @@ public class DiscordCTRL {
 	public ResponseEntity<List<Discord>> getAllDiscord(HttpServletRequest request) {
 		boolean okAdmin = access.verifierRole(request, "admin");
 		boolean okEmploye = access.verifierRole(request, "employe");
+		boolean okUser = access.verifierRole(request, "user");
 		
-		if(okAdmin || okEmploye) {
+		if(okAdmin || okEmploye || okUser) {
 			List<Discord> discord = disService.getAllDiscord();
 			return ResponseEntity.ok(discord);
 		} else {
