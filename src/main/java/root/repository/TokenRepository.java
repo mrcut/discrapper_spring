@@ -10,9 +10,8 @@ import root.entites.Token;
 
 public interface TokenRepository extends JpaRepository<Token, Integer>{
 	
+	
 	@Query("select t from Token t where t.tokenCode = :paramValeur")
 	public Optional<Token> selectByValeur(@Param("paramValeur") String valeur);
-	
-	
-
 }
+

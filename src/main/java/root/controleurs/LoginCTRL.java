@@ -18,7 +18,6 @@ import root.service.UtilisateurService;
  public class LoginCTRL {
  	
  	
- 	
  	private UtilisateurService usrService;
  	
  	
@@ -28,7 +27,6 @@ import root.service.UtilisateurService;
  	}
 
 
- 	
  	@PostMapping("/api/login")
  	public ResponseEntity<LoginReponse> login(@RequestBody LoginInfo infos){
  		

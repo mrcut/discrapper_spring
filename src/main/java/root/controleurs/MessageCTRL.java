@@ -23,7 +23,6 @@ import root.service.MessageService;
 public class MessageCTRL {
 
 	
-	
 	private AccessSecurityService access;
 	private MessageService msgService;
 
@@ -34,7 +33,6 @@ public class MessageCTRL {
 		this.access = access;
 	}
 
-	
 	
 	@GetMapping("/api/messages")
 	public ResponseEntity<List<Message>> getAllMessages(HttpServletRequest request) {

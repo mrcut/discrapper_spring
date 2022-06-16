@@ -31,15 +31,12 @@ import root.service.UtilisateurService;
 public class UtilisateurCTRL {
 
 	
-	
 	@Autowired
 	private AccessSecurityService access;
 
-	
 	@Autowired
 	private UtilisateurService usrService;
 
-	
 	
 	@GetMapping("/api/users")
 	public ResponseEntity<List<Utilisateur>> getAllUsers(HttpServletRequest request){

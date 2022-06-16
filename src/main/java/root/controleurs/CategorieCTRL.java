@@ -21,15 +21,14 @@ import root.service.CategorieService;
 public class CategorieCTRL {
 
 	
-	
 	private CategorieService catService;
 	private AccessSecurityService access;
+	
 	
 	@Autowired
 	public CategorieCTRL(CategorieService catService, AccessSecurityService access) {
 		this.catService = catService;
 		this.access = access;
-	
 	}
 	
 	

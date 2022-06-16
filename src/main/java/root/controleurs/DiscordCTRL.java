@@ -27,15 +27,12 @@ import root.service.DiscordService;
 public class DiscordCTRL {
 
 	
-	
 	@Autowired
 	private AccessSecurityService access;
-
 	
 	@Autowired
 	private DiscordService disService;
 
-	
 	
 	@GetMapping("/api/discords")
 	public ResponseEntity<List<Discord>> getAllDiscord(HttpServletRequest request) {

@@ -27,5 +27,4 @@ public interface UtilisateurService {
 	public void deleteUser(int id) throws Exception;
 	
 	public Utilisateur updateUser(Integer id, UserUpdate usr) throws Exception;
-	
 }

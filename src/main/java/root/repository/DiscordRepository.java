@@ -15,8 +15,5 @@ public interface DiscordRepository extends JpaRepository<Discord, Integer> {
 			@Param("paramLien") String link,
 			@Param("paramChannel") String channel);
 	
-	
-	
-	
 }
  
