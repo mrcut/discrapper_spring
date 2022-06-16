@@ -81,19 +81,29 @@ public class DiscordServiceImpl implements DiscordService {
 	
 	public Discord updateDiscord(Integer id, Discord dis) throws Exception {
 		Optional<Discord> option = discordRepository.findById(id);
-		System.out.println(option);
 		
+		
+		if (dis.getDiscordNom() == null || dis.getDiscordNom().trim().isEmpty()) {
+			throw new Exception("Erreur, Nom du Discord obligatoire");
+		}
+		
+		if (dis.getDiscordLien() == null || dis.getDiscordLien().trim().isEmpty()) {
+			throw new Exception("Erreur, Lien du Discord obligatoire");
+		}
+		
+		if (dis.getDiscordChannel() == null || dis.getDiscordChannel().trim().isEmpty()) {
+			throw new Exception("Erreur, Id du Channel obligatoire");
+		}
 		
 		if(option.isPresent()) {
-			List<Discord> liste = discordRepository.findDiscord(dis.getDiscordNom(), dis.getDiscordLien(), dis.getDiscordChannel());
-		
-			
+				
 			Discord d = option.get();
 			d.setDiscordNom(dis.getDiscordNom());
 			d.setDiscordLien(dis.getDiscordLien());
 			d.setDiscordChannel(dis.getDiscordChannel());
 			discordRepository.save(d);
 			return d;
+			
 			
 		}
 		

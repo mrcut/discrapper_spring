@@ -21,6 +21,7 @@ import root.service.CategorieService;
 public class CategorieCTRL {
 
 	
+	
 	private CategorieService catService;
 	private AccessSecurityService access;
 	
@@ -34,13 +35,17 @@ public class CategorieCTRL {
 	
 	@GetMapping("/api/categories")
 	public ResponseEntity<List<Categorie>> getAllCategories(HttpServletRequest request){
+		
 		boolean okAdmin = access.verifierRole(request, "admin");
 		boolean okEmploye = access.verifierRole(request, "employe");
+		
 		if (okAdmin || okEmploye) {
 			List<Categorie> categories = catService.getAllCategories();
 			return ResponseEntity.ok(categories);
-	} else {
-		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès Refusé");
-	}
+		} 
+		
+		else {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès Refusé");
+		}
 	}
 }

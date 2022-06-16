@@ -35,7 +35,9 @@ import root.service.UtilisateurService;
  		try {
  			LoginReponse lr = usrService.login(infos.getEmail(),infos.getPassword());
  			return ResponseEntity.ok(lr);
- 		} catch  (Exception ex) {
+ 		} 
+ 		
+ 		catch  (Exception ex) {
  			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
  		}
  	}

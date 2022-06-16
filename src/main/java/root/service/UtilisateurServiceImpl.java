@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import root.entites.Token;
 import root.entites.Utilisateur;
 import root.http.LoginReponse;
-import root.http.UserInput;
+import root.http.UserUpdate;
 import root.repository.MessageRepository;
 import root.repository.TokenRepository;
 import root.repository.UtilisateurRepository;
@@ -113,20 +113,15 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 	
 	
-	public Utilisateur updateUser(Integer id, UserInput usr) throws Exception{
-		System.out.println(id);
+	public Utilisateur updateUser(Integer id, UserUpdate usr) throws Exception{
 		Optional<Utilisateur> option = usrRepository.findById(id);
-		System.out.println(option);
 		if(option.isPresent()) {
-			System.out.println("User is present");
 			Utilisateur u = option.get();
 
-			String encodedMdp = encodeur.hasher(usr.getMdp());
 			u.setUtilisateurEmail(usr.getEmail());
 			u.setUtilisateurNom(usr.getNom());
 			u.setUtilisateurPrenom(usr.getPrenom());
 			u.setUtilisateurTel(usr.getTel());
-			u.setUtilisateurMdp(encodedMdp);
 			u.setUtilisateurDiscord(usr.getDiscord());
 			u.setUtilisateurRole(usr.getRole());
 			usrRepository.save(u);
@@ -140,13 +135,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			String newTel, String newDiscord) {
 		// 1) Controler et modifier les champs
 		
-		// 2) Modifier l'usr
+	
 			usr.setUtilisateurNom(newNom);
 			usr.setUtilisateurPrenom(newPrenom);
 			usr.setUtilisateurTel(newTel);
 			usr.setUtilisateurDiscord(newDiscord);
-		
-		// 3) Sauvegarder les modifs
 			usrRepository.save(usr);
 			
 			return usr;

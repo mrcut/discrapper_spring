@@ -38,55 +38,73 @@ public class MessageCTRL {
 	
 	@GetMapping("/api/messages")
 	public ResponseEntity<List<Message>> getAllMessages(HttpServletRequest request) {
+		
 		boolean okAdmin = access.verifierRole(request, "admin");
 		boolean okEmploye = access.verifierRole(request, "employe");
+		
 		if (okAdmin || okEmploye) {
 			List<Message> messages = msgService.getAllMessages();
 			return ResponseEntity.ok(messages);
-		} else {
-			
+		} 
+		
+		else {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
 		}
 	}
 
 	
 	@GetMapping("/api/message/{id}")
-	public ResponseEntity<Message> getMessageById(@PathVariable("id") int id ){
-		//boolean okAdmin = access.verifierRole(request, "admin");
-		//boolean okEmploye = access.verifierRole(request, "employe");
+	public ResponseEntity<Message> getMessageById(HttpServletRequest request, @PathVariable("id") int id ){
+		
+		boolean okAdmin = access.verifierRole(request, "admin");
+		boolean okEmploye = access.verifierRole(request, "employe");
 
-		//if(okAdmin || okEmploye) {	
-		Optional<Message> option = msgService.getMessageById(id);
-		if(option.isPresent()) {
-			Message msg = option.get();
-			System.out.println(msg);
-			return ResponseEntity.ok(msg);
-
+		if(okAdmin || okEmploye) {	
+			Optional<Message> option = msgService.getMessageById(id);
+			
+			if(option.isPresent()) {
+				Message msg = option.get();			
+				return ResponseEntity.ok(msg);
+			}
+		
+			else {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message introuvable");
+			}
+		
 		}
 		else {
-			
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message introuvable");
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
 		}
-		
-		
 	}
 
 	
 	@DeleteMapping("/api/message/{id}")
-	public void deleteMessage(@PathVariable Integer id) throws Exception{
-		msgService.deleteMessage(id);
+	public void deleteMessage(HttpServletRequest request, @PathVariable Integer id) throws Exception{
 		
-	}
-	 
+		boolean okAdmin = access.verifierRole(request, "admin");
+		
+		if(okAdmin) {	
+			msgService.deleteMessage(id);
+		}		
+		
+		else {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
+		}
+	} 
+	
 	
 	@GetMapping("/api/category/{id}")
 	public ResponseEntity<List<Message>> getAllMessagesByCategorie(HttpServletRequest request, @PathVariable("id") int id){
+		
 		boolean okAdmin = access.verifierRole(request, "admin");
 		boolean okEmploye = access.verifierRole(request, "employe");
+		
 		if (okAdmin || okEmploye) {
 			List<Message> messages = msgService.getAllMessagesByCategorie(id);
 			return ResponseEntity.ok(messages);
-		} else {
+		} 
+		
+		else {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
 		}
 	} 
