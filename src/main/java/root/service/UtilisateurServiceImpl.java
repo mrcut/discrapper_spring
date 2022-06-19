@@ -175,24 +175,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	public String executeScript() throws IOException {
 		
 		int count = msgRepository.countMessages();
-		int newCount;
+		int newCount ;
 		int diffCount;
 
-		if (count == 0) {
-			exec();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			newCount = msgRepository.countMessages();
-			if (newCount == 1) {
-				return "1 message ajouté";
-			}
-			return newCount + " messages ajoutés";
-		}
-
-		else {
+		
 			exec();
 			try {
 				Thread.sleep(1000);
@@ -205,11 +191,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 				return "Pas de nouveau message";
 			}
 			if (diffCount == 1) {
-				return " 1 message ajouté";
+				return "1 message ajouté";
 			}
-			return diffCount + " messages ajoutés";
-		}
 
+			return diffCount + " messages ajoutés";
+
+	
 	}
 	
 	

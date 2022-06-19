@@ -153,7 +153,7 @@ public class UtilisateurCTRL {
 	
 
 	
-	@PostMapping("/api/user/script")
+	@GetMapping("/api/user/script")
 	public ResponseEntity<String> executeScript(HttpServletRequest request) throws IOException {
 		
 		boolean okAdmin = access.verifierRole(request, "admin");
