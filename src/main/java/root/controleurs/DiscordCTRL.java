@@ -27,25 +27,26 @@ import root.service.DiscordService;
 public class DiscordCTRL {
 
 	
-	
 	@Autowired
 	private AccessSecurityService access;
-
 	
 	@Autowired
 	private DiscordService disService;
 
 	
-	
 	@GetMapping("/api/discords")
 	public ResponseEntity<List<Discord>> getAllDiscord(HttpServletRequest request) {
+		
 		boolean okAdmin = access.verifierRole(request, "admin");
 		boolean okEmploye = access.verifierRole(request, "employe");
+		boolean okUser = access.verifierRole(request, "user");
 		
-		if(okAdmin || okEmploye) {
+		if(okAdmin || okEmploye || okUser) {
 			List<Discord> discord = disService.getAllDiscord();
-			return ResponseEntity.ok(discord);
-		} else {
+			return ResponseEntity.ok(discord);			
+		} 
+		
+		else {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
 		}
 
@@ -53,14 +54,25 @@ public class DiscordCTRL {
 	
 	
 	@GetMapping("/api/discord/{id}")
-	public ResponseEntity<Discord> getDiscordById(@PathVariable("id") int id){
-		Optional<Discord> option = disService.getDiscordById(id);
-		if(option.isPresent()) {
-			Discord dis = option.get();
-			return ResponseEntity.ok(dis);
-		}
+	public ResponseEntity<Discord> getDiscordById(HttpServletRequest request, @PathVariable("id") int id){
+		
+		boolean okAdmin = access.verifierRole(request, "admin");
+		
+		if (okAdmin) {			
+			Optional<Discord> option = disService.getDiscordById(id);
+			
+			if(option.isPresent()) {
+				Discord dis = option.get();
+				return ResponseEntity.ok(dis);
+			}
+			
+			else {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Discord introuvable");
+			}
+					
+		} 
 		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Discord introuvable");
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
 		}
 	}
 	
@@ -70,12 +82,13 @@ public class DiscordCTRL {
 	throws Exception {
 
 		boolean okAdmin = access.verifierRole(request, "admin");
+		
 		if (okAdmin) {
 			Discord dis = disService.createDiscord(input.getDiscordNom(), input.getDiscordLien(), input.getDiscordChannel());
-
 			return ResponseEntity.ok(dis);
-		} else {
-
+		} 
+		
+		else {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
 		}
 
@@ -83,16 +96,32 @@ public class DiscordCTRL {
 
 	
 	@PutMapping("/api/discord/update/{id}")
-	public ResponseEntity<Discord> updateDiscord(@PathVariable Integer id , @RequestBody Discord discord) throws Exception{
-		Discord dis = disService.updateDiscord(id, discord);
-		return ResponseEntity.ok(dis);
+	public ResponseEntity<Discord> updateDiscord(HttpServletRequest request, @PathVariable Integer id , @RequestBody Discord discord) throws Exception{
+		
+		boolean okAdmin = access.verifierRole(request, "admin");
+		
+		if (okAdmin) {
+			Discord dis = disService.updateDiscord(id, discord);
+			return ResponseEntity.ok(dis);
+		}	
+		
+		else {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
+		}
 	}
 	
 
 	@DeleteMapping("/api/discord/delete/{id}")
-	public void deleteDiscord(@PathVariable Integer id) throws Exception{
-		disService.deleteDiscord(id);
+	public void deleteDiscord(HttpServletRequest request, @PathVariable Integer id) throws Exception{
 		
-	}
+		boolean okAdmin = access.verifierRole(request, "admin");
+		
+		if (okAdmin) {
+			disService.deleteDiscord(id);	
+		}
 	
+		else {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "accès refusé");
+		}
+	}
 }

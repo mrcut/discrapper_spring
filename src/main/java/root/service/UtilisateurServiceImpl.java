@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import root.entites.Token;
 import root.entites.Utilisateur;
 import root.http.LoginReponse;
-import root.http.UserInput;
+import root.http.UserUpdate;
 import root.repository.MessageRepository;
 import root.repository.TokenRepository;
 import root.repository.UtilisateurRepository;
@@ -22,11 +22,13 @@ import root.security.PasswordEncoderService;
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {
 
+	
 	private UtilisateurRepository usrRepository;
 	private PasswordEncoderService encodeur;
 	private TokenRepository tokenRepository;
 	private MessageRepository msgRepository;
 
+	
 	@Autowired
 	public UtilisateurServiceImpl(UtilisateurRepository usrRepository, PasswordEncoderService encodeur,
 			TokenRepository tokenRepository, MessageRepository msgRepository) {
@@ -34,78 +36,15 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		this.encodeur = encodeur;
 		this.tokenRepository = tokenRepository;
 		this.msgRepository = msgRepository;
-
 	}
 
-	private void exec() throws IOException {
-		String urlScript = "c:\\Users\\mrcut\\Desktop\\Stage\\discord_insert.py \"";
-		String fetching = "python " + urlScript;   
-		String[] commandToExecute = new String[] { "cmd.exe", "/c", fetching };
-		Runtime.getRuntime().exec(commandToExecute);
-		;
-	}
-
-	public String executeScript() throws IOException {
-		int count = msgRepository.countMessages();
-		int newCount;
-		int diffCount;
-
-		if (count == 0) {
-			exec();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			newCount = msgRepository.countMessages();
-			if (newCount == 1) {
-				return "1 message ajouté";
-			}
-			return newCount + " messages ajoutés";
-		}
-
-		else {
-			exec();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			newCount = msgRepository.countMessages();
-			diffCount = newCount - count;
-			if (diffCount == 0) {
-				return "Pas de nouveau message";
-			}
-			if (diffCount == 1) {
-				return " 1 message ajouté";
-			}
-			return diffCount + " messages ajoutés";
-		}
-
-	}
 	
-	
-	public void deleteUser(int id) throws Exception {
-	
-		
-	Optional<Utilisateur> option = usrRepository.findById(id);
-	
-	if(option.isPresent()) {
-		Utilisateur u = option.get();
-		usrRepository.delete(u);
-	}
-	else {
-	throw new Exception("Erreur, cet Utilisateur n'existe pas");
-}
-
-}
-	
-	public List<Utilisateur> getAllUsers(){
-		
+	public List<Utilisateur> getAllUsers(){		
 		
 		List<Utilisateur> usrs = usrRepository.findAll();
 		return usrs;
 	}
+	
 	
 	public Optional<Utilisateur> getUserById(int id) {
 		
@@ -113,47 +52,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 	
 	
-	public Utilisateur updateUser(Integer id, UserInput usr) throws Exception{
-		System.out.println(id);
-		Optional<Utilisateur> option = usrRepository.findById(id);
-		System.out.println(option);
-		if(option.isPresent()) {
-			System.out.println("User is present");
-			Utilisateur u = option.get();
-
-			String encodedMdp = encodeur.hasher(usr.getMdp());
-			u.setUtilisateurEmail(usr.getEmail());
-			u.setUtilisateurNom(usr.getNom());
-			u.setUtilisateurPrenom(usr.getPrenom());
-			u.setUtilisateurTel(usr.getTel());
-			u.setUtilisateurMdp(encodedMdp);
-			u.setUtilisateurDiscord(usr.getDiscord());
-			u.setUtilisateurRole(usr.getRole());
-			usrRepository.save(u);
-			return u ;
-		}
-		throw new Exception("Erreur, cet Utilisateur n'existe pas");
-	}
-	
-	
-	public Utilisateur editProfile(Utilisateur usr, String newNom, String newPrenom,
-			String newTel, String newDiscord) {
-		// 1) Controler et modifier les champs
-		
-		// 2) Modifier l'usr
-			usr.setUtilisateurNom(newNom);
-			usr.setUtilisateurPrenom(newPrenom);
-			usr.setUtilisateurTel(newTel);
-			usr.setUtilisateurDiscord(newDiscord);
-		
-		// 3) Sauvegarder les modifs
-			usrRepository.save(usr);
-			
-			return usr;
-
-	}
-	
-
 	public Utilisateur createUser(String email, String mdp, String nom, String prenom,
 			String tel, String discord, String role) throws Exception {
 
@@ -183,19 +81,15 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		if (liste.size() > 0) {
 
 			for (Utilisateur u : liste) {
-				
-
-				
+							
 				if (u.getUtilisateurEmail().equals(email)) {
 					throw new Exception("Erreur, cet Email est déjà pris");
 				}
 						
-
 				if (u.getUtilisateurDiscord().equals(discord)) {
 
 					throw new Exception("Erreur, cet identifiant Discord est déjà pris");
 				}
-				
 						
 			}
 		}
@@ -218,8 +112,96 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		return usr;
 
 	}
+	
+	
+	public Utilisateur updateUser(Integer id, UserUpdate usr) throws Exception{
+		
+		Optional<Utilisateur> option = usrRepository.findById(id);
+		
+		if(option.isPresent()) {
+			Utilisateur u = option.get();
+			u.setUtilisateurEmail(usr.getEmail());
+			u.setUtilisateurNom(usr.getNom());
+			u.setUtilisateurPrenom(usr.getPrenom());
+			u.setUtilisateurTel(usr.getTel());
+			u.setUtilisateurDiscord(usr.getDiscord());
+			u.setUtilisateurRole(usr.getRole());
+			usrRepository.save(u);
+			return u ;
+		}
+		
+		throw new Exception("Erreur, cet Utilisateur n'existe pas");
+	}
+	
+	
+	public void deleteUser(int id) throws Exception {
+	
+		Optional<Utilisateur> option = usrRepository.findById(id);
+	
+		if(option.isPresent()) {
+			Utilisateur u = option.get();
+			usrRepository.delete(u);
+		}
+		
+		else {
+			throw new Exception("Erreur, cet Utilisateur n'existe pas");
+		}
+	}
+	
 
+	public Utilisateur editProfile(Utilisateur usr, String newNom, String newPrenom,
+			String newTel, String newDiscord) {
+
+			usr.setUtilisateurNom(newNom);
+			usr.setUtilisateurPrenom(newPrenom);
+			usr.setUtilisateurTel(newTel);
+			usr.setUtilisateurDiscord(newDiscord);
+			usrRepository.save(usr);
+			return usr;
+	}
+	
+	
+	
+	private void exec() throws IOException {
+		
+		String urlScript = "c:\\Users\\mrcut\\Desktop\\Stage\\discord_insert.py \"";
+		String fetching = "python " + urlScript;   
+		String[] commandToExecute = new String[] { "cmd.exe", "/c", fetching };
+		Runtime.getRuntime().exec(commandToExecute);
+		;
+	}
+
+	
+	public String executeScript() throws IOException {
+		
+		int count = msgRepository.countMessages();
+		int newCount ;
+		int diffCount;
+
+		
+			exec();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			newCount = msgRepository.countMessages();
+			diffCount = newCount - count;
+			if (diffCount == 0) {
+				return "Pas de nouveau message";
+			}
+			if (diffCount == 1) {
+				return "1 message ajouté";
+			}
+
+			return diffCount + " messages ajoutés";
+
+	
+	}
+	
+	
 	public LoginReponse login(String email, String password) throws Exception {
+		
 		LoginReponse lr = new LoginReponse();
 
 		email = email.trim();
@@ -258,7 +240,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		return lr;
 	}
 
+	
 	private Token genererToken() {
+		
 		UUID uuid = UUID.randomUUID();
 		String valeur = uuid.toString();
 

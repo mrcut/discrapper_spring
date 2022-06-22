@@ -15,10 +15,9 @@ public class CategorieServiceImpl implements CategorieService {
 		private CategorieRepository catRepo;
 		
 		
-		public List<Categorie> getAllCategories(){
+		public List<Categorie> getAllCategories(){		
 			
 			List<Categorie> categories = catRepo.findAll();
 			return categories;
-		}
-	
+		}	
 }

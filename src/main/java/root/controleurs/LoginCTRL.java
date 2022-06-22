@@ -18,7 +18,6 @@ import root.service.UtilisateurService;
  public class LoginCTRL {
  	
  	
- 	
  	private UtilisateurService usrService;
  	
  	
@@ -28,14 +27,15 @@ import root.service.UtilisateurService;
  	}
 
 
- 	
  	@PostMapping("/api/login")
  	public ResponseEntity<LoginReponse> login(@RequestBody LoginInfo infos){
  		
  		try {
  			LoginReponse lr = usrService.login(infos.getEmail(),infos.getPassword());
  			return ResponseEntity.ok(lr);
- 		} catch  (Exception ex) {
+ 		} 
+ 		
+ 		catch  (Exception ex) {
  			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
  		}
  	}

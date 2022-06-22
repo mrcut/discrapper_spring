@@ -1,4 +1,4 @@
-package root.repository;
+	package root.repository;
 
 import java.util.*;
 
@@ -14,7 +14,6 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Intege
 	@Query("select u from Utilisateur u WHERE u.utilisateurEmail= :paramEmail OR u.utilisateurDiscord= :paramDiscord")
 	public List<Utilisateur> findUser(@Param("paramEmail") String email, 
 			@Param("paramDiscord") String discord);
-
 
 
 	@Query("select u From Utilisateur u WHERE u.utilisateurEmail= :paramEmail")

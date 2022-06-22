@@ -11,18 +11,17 @@ import root.entites.Message;
 
 public interface MessageRepository extends JpaRepository<Message, Integer>{
 
+	
 	public Optional<Message> findByMessageContent(String messageContent);
 	
-    	@Query("select count(messageContent) from Message m")
-        public int countMessages();
+	
+	@Query("select count(messageContent) from Message m")
+    public int countMessages();
     	
     	
-    	@Query("select m from Message m where m.categorieId.categorieId = :paramId")
-    	public List<Message> findByCategorieId(@Param("paramId")int id);
-    	
-    	
-    	
-    	
+	@Query("select m from Message m where m.categorieId.categorieId = :paramId")
+	public List<Message> findByCategorieId(@Param("paramId")int id);
+
 }
     	
 
