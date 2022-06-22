@@ -46,38 +46,26 @@ public class AccessSecurityServiceImpl implements AccessSecurityService {
 	public boolean verifierRole(HttpServletRequest request, String nomRole) {
 		
 		Optional<Token> option = identifierToken(request);
-<<<<<<< HEAD
+
 
 
 		if(option.isPresent()) {
 			Token t = option.get();
-
-			// 1) Si le token a expiré return false
-			
-			// 2) Supprimer les tokens qui ont expirés
 			
 			Calendar cal = Calendar.getInstance();
+			Date actual = cal.getTime();
+			
 			cal.add(Calendar.MINUTE, -90);
 			Date expireDate = cal.getTime();
-			
-			System.out.println(t.getTokenExpiration());
-			System.out.println(expireDate);
-			System.out.println((t.getTokenExpiration().before(expireDate)));
-			
-				if (t.getTokenExpiration().before(expireDate)) {
-			System.out.println("expired");
-				return false;
+		
+				if (t.getTokenExpiration().before(actual)) {
+					return false;
 				}
 		
 			List<Token> liste = tokenRepository.findExpiredTokens(expireDate);
 			tokenRepository.deleteAll(liste);
 
-			// 3) Si le token est bon
-=======
-		
-		if(option.isPresent()) {
-			Token t = option.get();
->>>>>>> 31a59aacc0dfdd1f7dac9a8bde66a3649397ab1f
+
 			Utilisateur usr = t.getUtilisateur();
 			String role = usr.getUtilisateurRole();				
 			return role.equals(nomRole);		
