@@ -1,5 +1,7 @@
 package root.repository;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +16,8 @@ public interface TokenRepository extends JpaRepository<Token, Integer>{
 	public Optional<Token> selectByValeur(@Param("paramValeur") String valeur);
 	
 	
-
+	@Query("select t from Token t where t.tokenExpiration < :paramDate")
+	public List<Token> findExpiredTokens(@Param("paramDate") Date date);
+	
+	
 }
