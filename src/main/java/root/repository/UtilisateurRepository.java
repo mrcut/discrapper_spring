@@ -19,4 +19,8 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Intege
 	@Query("select u From Utilisateur u WHERE u.utilisateurEmail= :paramEmail")
 	public Optional<Utilisateur> findEmail(@Param("paramEmail")String email);
 	
+	
+	@Query("select u From Utilisateur u WHERE u.utilisateurDiscord= :paramDiscord")
+	public Optional<Utilisateur> findDiscord(@Param("paramDiscord")String discord);
+	
 }

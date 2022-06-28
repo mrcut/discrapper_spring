@@ -1,14 +1,20 @@
 package root.service;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import root.entites.Token;
 import root.entites.Utilisateur;
@@ -27,7 +33,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	private PasswordEncoderService encodeur;
 	private TokenRepository tokenRepository;
 	private MessageRepository msgRepository;
-
+    private String chiffreRegex = "[0-9]";
+    private String nomPrenomRegex = "[a-zA-Z]([- ',.a-zA-Z]{0,48}[.a-zA-Z])?";
+    private String emailRegex  = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+    private String discordRegex = "^.{3,32}#[0-9]{4}$";
+    private String telRegex = "^(?:(?:\\+|00)33[\\s.-]{0,3}(?:\\(0\\)[\\s.-]{0,3})?|0)[1-9](?:(?:[\\s.-]?\\d{2}){4}|\\d{2}(?:[\\s.-]?\\d{3}){2})$";
 	
 	@Autowired
 	public UtilisateurServiceImpl(UtilisateurRepository usrRepository, PasswordEncoderService encodeur,
@@ -52,48 +62,102 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 	
 	
+	
+    private String supprimerAccents(String texte){
+        String copie = 
+            Normalizer.normalize(texte, Normalizer.Form.NFD);
+        copie = 
+           copie.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return copie;
+    }
+	
 	public Utilisateur createUser(String email, String mdp, String nom, String prenom,
 			String tel, String discord, String role) throws Exception {
 
+		HashMap<String, String> erreurs = new HashMap<>();
+		
+		Optional<Utilisateur> option = usrRepository.findEmail(email);
+		Optional<Utilisateur> option2 = usrRepository.findDiscord(discord);
+		
 		
 		if (email == null || email.trim().isEmpty()) {
-			throw new Exception("Erreur, Email obligatoire");
+			erreurs.put("erEmail", "Email obligatoire");
 		}
 		
-		if (mdp == null || mdp.isEmpty()) {
-			throw new Exception("Erreur, Mdp obligatoire");
-		}
-		
-		if (nom == null || nom.trim().isEmpty()) {
-			throw new Exception("Erreur, Nom obligatoire");
-		}
-		
-		if (prenom == null || prenom.trim().isEmpty()) {
-			throw new Exception("Erreur, Prenom obligatoire");
-		}
-		
-		if (role == null || role.isEmpty()) {
-			throw new Exception("Erreur, Role obligatoire");
-		}
-		
-		List<Utilisateur> liste = usrRepository.findUser(email, discord);
-		
-		if (liste.size() > 0) {
-
-			for (Utilisateur u : liste) {
-							
-				if (u.getUtilisateurEmail().equals(email)) {
-					throw new Exception("Erreur, cet Email est déjà pris");
+			else {
+				email = email.trim();	
+				if(!email.matches(emailRegex)) {
+					erreurs.put("erEmail", "Email invalide");
+			} 
+			else {
+				if(option.isPresent()) {
+					erreurs.put("erEmail","Email déjà utilisé");
 				}
-						
-				if (u.getUtilisateurDiscord().equals(discord)) {
-
-					throw new Exception("Erreur, cet identifiant Discord est déjà pris");
-				}
-						
 			}
 		}
 		
+		
+		if (mdp == null || mdp.isEmpty()) {
+			erreurs.put("erMdp", "Mot de passe obligatoire");
+		}
+		
+			else {
+				Pattern p = Pattern.compile(chiffreRegex);
+				Matcher m = p.matcher(mdp);
+					if(mdp.length() < 8 || !m.find()) {
+						erreurs.put("erMdp", "Au Moins 8 caractères et au moins 1 chiffre");
+					}
+			}
+		
+		
+		if (nom == null || nom.trim().isEmpty()) {
+			erreurs.put("erNom", "Nom obligatoire");	
+		}
+			else {
+				nom = nom.trim();
+				String nomSansAccent = supprimerAccents(nom);
+				if(!nomSansAccent.matches(nomPrenomRegex)){
+					erreurs.put("erNom", "Nom invalide");
+				}
+			}
+		
+		if (prenom == null || prenom.trim().isEmpty()) {
+			erreurs.put("erPrenom", "Prénom obligatoire");	
+		}
+		else {
+            prenom = prenom.trim();
+            String prenomSansAccent = supprimerAccents(prenom);
+            if(!prenomSansAccent.matches(nomPrenomRegex)){
+                erreurs.put("erPrenom", "Prénom invalide");
+            }
+        }
+		
+		
+		if (!tel.isEmpty()) {
+			tel = tel.trim();
+			if(!tel.matches(telRegex)) {
+				erreurs.put("erTel", "Tél invalide");
+			}
+		}
+		
+		if (!discord.isEmpty()) {
+			discord = discord.trim();
+			if(!discord.matches(discordRegex)) {
+				erreurs.put("erDiscord", "Pseudo Discord invalide");	
+			}
+			else {
+				if(option2.isPresent()) {
+					erreurs.put("erDiscord", "Pseudo Discord déjà utilisé");
+				}
+			}
+			
+		}
+				
+        if(!erreurs.isEmpty()){
+            ObjectMapper jsonMapper = new ObjectMapper();
+            String erreursJson = jsonMapper.writeValueAsString(erreurs);
+            throw new Exception (erreursJson);
+        }
 	
 		Utilisateur usr = new Utilisateur();
 		String encodedMdp = encodeur.hasher(mdp);
